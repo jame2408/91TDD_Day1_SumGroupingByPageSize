@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using FluentAssertions;
 
 namespace SumGroupingByPageSize
 {
@@ -34,6 +35,19 @@ namespace SumGroupingByPageSize
             //Assert
             var expected = new List<int> { 50, 66, 60};
             CollectionAssert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void When_Pagesize_LessThan_or_EqualTo_0_Should_be_ArgumentException()
+        {
+            //Arrange
+            var target = new Order();
+
+            //Act
+            Action act = () => target.GetOrders().GetSum(pagesize: 0, selector: s => s.Revenue).ToList();
+
+            //Assert
+            act.ShouldThrow<ArgumentException>();
         }
     }
 
@@ -71,6 +85,11 @@ namespace SumGroupingByPageSize
     {
         public static IEnumerable<int> GetSum<T>(this IEnumerable<T> data, int pagesize, Func<T, int> selector)
         {
+            if (pagesize <= 0)
+            {
+                throw new ArgumentException();
+            }
+
             //Todo: 卡住，幫 orders 想一個好名字吧...
             var orders = data.ToList();
 
