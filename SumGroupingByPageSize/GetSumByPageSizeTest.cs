@@ -21,6 +21,20 @@ namespace SumGroupingByPageSize
             var expected = new List<int> { 6, 15, 24, 21 };
             CollectionAssert.AreEqual(expected, actual);
         }
+
+        [TestMethod]
+        public void Pagesize_is_4_and_Sum_Revenue_Should_be_50_66_60()
+        {
+            //Arrange
+            var target = new Order();
+
+            //Act
+            var actual = target.GetOrders().GetSum(pagesize: 4, groupName: s => s.Revenue).ToList();
+
+            //Assert
+            var expected = new List<int> { 50, 66, 60};
+            CollectionAssert.AreEqual(expected, actual);
+        }
     }
 
     internal class Order
