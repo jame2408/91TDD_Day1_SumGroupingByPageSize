@@ -15,7 +15,7 @@ namespace SumGroupingByPageSize
             var target = new Order();
 
             //Act
-            var actual = target.GetOrders().GetSum(pagesize: 3, groupName: s => s.Cost).ToList();
+            var actual = target.GetOrders().GetSum(pagesize: 3, selector: s => s.Cost).ToList();
 
             //Assert
             var expected = new List<int> { 6, 15, 24, 21 };
@@ -29,7 +29,7 @@ namespace SumGroupingByPageSize
             var target = new Order();
 
             //Act
-            var actual = target.GetOrders().GetSum(pagesize: 4, groupName: s => s.Revenue).ToList();
+            var actual = target.GetOrders().GetSum(pagesize: 4, selector: s => s.Revenue).ToList();
 
             //Assert
             var expected = new List<int> { 50, 66, 60};
@@ -39,13 +39,13 @@ namespace SumGroupingByPageSize
 
     internal class Order
     {
-        public int Id { get; set; }
+        internal int Id { get; set; }
 
-        public int Cost { get; set; }
+        internal int Cost { get; set; }
 
-        public int Revenue { get; set; }
+        internal int Revenue { get; set; }
 
-        public int SellPrice { get; set; }
+        internal int SellPrice { get; set; }
 
         internal IEnumerable<Order> GetOrders()
         {
@@ -69,14 +69,15 @@ namespace SumGroupingByPageSize
 
     static class GroupingByPageSize
     {
-        public static IEnumerable<int> GetSum<T>(this IEnumerable<T> data, int pagesize, Func<T, int> groupName)
+        public static IEnumerable<int> GetSum<T>(this IEnumerable<T> data, int pagesize, Func<T, int> selector)
         {
+            //Todo: 卡住，幫 orders 想一個好名字吧...
             var orders = data.ToList();
 
             var index = 0;
             while (index <= orders.Count)
             {
-                yield return orders.Skip(index).Take(pagesize).Sum(groupName);
+                yield return orders.Skip(index).Take(pagesize).Sum(selector);
                 index += pagesize;
             }
         }
