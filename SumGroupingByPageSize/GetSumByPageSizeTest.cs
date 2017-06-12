@@ -9,12 +9,12 @@ namespace SumGroupingByPageSize
     [TestClass]
     public class GetSumByPageSizeTest
     {
+        //Arrange
+        Order target = new Order();
+
         [TestMethod]
         public void Pagesize_is_3_and_Sum_Cost_Should_be_6_15_24_21()
         {
-            //Arrange
-            var target = new Order();
-
             //Act
             var actual = target.GetOrders().GetSum(pagesize: 3, selector: s => s.Cost).ToList();
 
@@ -26,9 +26,6 @@ namespace SumGroupingByPageSize
         [TestMethod]
         public void Pagesize_is_4_and_Sum_Revenue_Should_be_50_66_60()
         {
-            //Arrange
-            var target = new Order();
-
             //Act
             var actual = target.GetOrders().GetSum(pagesize: 4, selector: s => s.Revenue).ToList();
 
@@ -40,9 +37,6 @@ namespace SumGroupingByPageSize
         [TestMethod]
         public void When_Pagesize_LessThan_or_EqualTo_0_Should_be_ArgumentException()
         {
-            //Arrange
-            var target = new Order();
-
             //Act
             Action act = () => target.GetOrders().GetSum(pagesize: 0, selector: s => s.Revenue).ToList();
 
@@ -51,7 +45,7 @@ namespace SumGroupingByPageSize
         }
     }
 
-    internal class Order
+    internal class Order : IOrder
     {
         internal int Id { get; set; }
 
@@ -61,7 +55,7 @@ namespace SumGroupingByPageSize
 
         internal int SellPrice { get; set; }
 
-        internal IEnumerable<Order> GetOrders()
+        public IEnumerable<Order> GetOrders()
         {
             var orders = new List<Order>()
             {
@@ -81,10 +75,16 @@ namespace SumGroupingByPageSize
         }
     }
 
+    internal interface IOrder
+    {
+        IEnumerable<Order> GetOrders();
+    }
+
     static class GroupingByPageSize
     {
         public static IEnumerable<int> GetSum<T>(this IEnumerable<T> data, int pagesize, Func<T, int> selector)
         {
+            //Todo: 將檢核提出來並取個好名字...
             if (pagesize <= 0)
             {
                 throw new ArgumentException();
@@ -94,11 +94,16 @@ namespace SumGroupingByPageSize
             var orders = data.ToList();
 
             var index = 0;
-            while (index <= orders.Count)
+            while (orders.MoveNext(index))
             {
                 yield return orders.Skip(index).Take(pagesize).Sum(selector);
                 index += pagesize;
             }
+        }
+
+        private static bool MoveNext<T>(this List<T> orders, int index)
+        {
+            return index <= orders.Count;
         }
     }
 }
