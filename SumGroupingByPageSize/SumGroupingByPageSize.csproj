@@ -57,7 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GetSumByPageSizeTest.cs" />
-    <Compile Include="GroupingByPageSize.cs" />
+    <Compile Include="GetSumByPageSize.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
