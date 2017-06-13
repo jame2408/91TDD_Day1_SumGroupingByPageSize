@@ -79,31 +79,4 @@ namespace SumGroupingByPageSize
     {
         IEnumerable<Order> GetOrders();
     }
-
-    static class GroupingByPageSize
-    {
-        public static IEnumerable<int> GetSum<T>(this IEnumerable<T> data, int pagesize, Func<T, int> selector)
-        {
-            //Todo: 將檢核提出來並取個好名字...
-            if (pagesize <= 0)
-            {
-                throw new ArgumentException();
-            }
-
-            //Todo: 卡住，幫 orders 想一個好名字吧...
-            var orders = data.ToList();
-
-            var index = 0;
-            while (orders.MoveNext(index))
-            {
-                yield return orders.Skip(index).Take(pagesize).Sum(selector);
-                index += pagesize;
-            }
-        }
-
-        private static bool MoveNext<T>(this List<T> orders, int index)
-        {
-            return index <= orders.Count;
-        }
-    }
 }
