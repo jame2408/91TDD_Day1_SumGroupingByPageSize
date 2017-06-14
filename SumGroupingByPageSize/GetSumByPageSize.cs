@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace SumGroupingByPageSize
 {
-    static class GetSumByPageSize
+    public static class GetSumByPageSize
     {
         public static IEnumerable<int> GetSum<TSource>(this IEnumerable<TSource> source, int pagesize, Func<TSource, int> selector)
         {
